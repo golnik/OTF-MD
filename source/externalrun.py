@@ -4,6 +4,8 @@ import sys
 
 from input import InputParams
 
+A2bohr = 1.8897259886
+
 class ExternalRun(object):
     def __init__(self, inp_params):
         self.inp_params = inp_params
@@ -21,13 +23,17 @@ class ExternalRun(object):
                                    stdout=subprocess.PIPE,
                                    bufsize=1,universal_newlines=True)
 
-        process.wait() #wait till process finishes
-
+        #process.wait() #wait till process finishes
+        
         #get output
-        output, error = process.communicate()
+        #output, error = process.communicate()
 
         #print output produced by script
-        out_stream.write(output)
+        #out_stream.write(output)
+        
+        while process.poll() is None:
+            out = process.stdout.readline()
+            out_stream.write(out)
 
     def read_EG_out(self, fname):
         '''

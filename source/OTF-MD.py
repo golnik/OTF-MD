@@ -8,6 +8,9 @@ from input import Input
 from geometry import Geometry
 from externalrun import ExternalRun
 
+#conversion coefficients
+fs2au = 41.341374575751
+
 if __name__ == "__main__":
     #get input file
     if len(sys.argv) > 1:
@@ -37,10 +40,7 @@ if __name__ == "__main__":
     #required propagation parameters
     n_coords = geom.get_n_coords()
     n_atoms = geom.get_n_atoms()
-    
-    amu2em = 1822.888530063
-    masses = [mass*amu2em for mass in geom.atomic_masses]
-    fs2au = 41.341374575751
+    masses = [mass for mass in geom.atomic_masses]
     dt = input.inp_params.prop_dt * fs2au
     
     nsteps = input.inp_params.prop_steps
@@ -111,18 +111,3 @@ if __name__ == "__main__":
         
         #shift gradients on previous timestep
         grad = grad_dt
-        
-        #calculate kinetic energy
-        time = tstep*dt/fs2au
-        T = 0.0
-        for i_atom in range(n_atoms):
-            v_i = np.zeros(3)
-            for i_coord in range(3):
-                v_i[i_coord] = geom.get_i_vel(3*i_atom+i_coord)
-                
-            v = np.sqrt(v_i[0]**2 + v_i[1]**2 + v_i[2]**2)
-            
-            T += 0.5 * masses[i_atom] * v**2
-        
-        V = energy_dt
-        print(time,T,V,T+V)

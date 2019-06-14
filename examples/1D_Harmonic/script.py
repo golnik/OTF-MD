@@ -1,6 +1,8 @@
 import numpy as np
 import sys
 
+A2bohr = 1.8897259886
+
 def V(x):
     return x**2
 
@@ -13,6 +15,9 @@ def read_geom(fname):
         lines_xyz = file.readlines()
         lines_xyz = lines_xyz[2]
     x = float(lines_xyz.split()[1])
+    
+    x *= A2bohr
+    
     return x
     
 geom_xyz = sys.argv[1]

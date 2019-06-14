@@ -1,5 +1,8 @@
 import numpy as np
 
+A2bohr = 1.8897259886
+amu2em = 1822.888530063
+
 class Geometry(object):
     def __init__(self):
         self.coords = []
@@ -19,9 +22,8 @@ class Geometry(object):
 
             self.atoms.append(data[0])
 
-            self.coords.append(float(data[1]))
-            self.coords.append(float(data[2]))
-            self.coords.append(float(data[3]))
+            for i_coord in range(3):
+                self.coords.append(float(data[i_coord+1])*A2bohr)
 
         self.vels = np.zeros(self.get_n_coords())
 
@@ -33,15 +35,20 @@ class Geometry(object):
         lines_xyz = inp_xyz.readlines()
         lines_xyz = lines_xyz[2:]
 
+        i_atom = 0
         for line in lines_xyz:
             data = line.split()
 
-            self.atoms.append(data[0])
+            try:
+                data[0] = self.atoms[i_atom]
+            except:
+                raise Exception("Different atoms in XYZ and VEL files.")
+            
+            for i_coord in range(3):
+                self.vels[3*i_atom+i_coord] = float(data[i_coord+1])*A2bohr
 
-            self.vels.append(float(data[1]))
-            self.vels.append(float(data[2]))
-            self.vels.append(float(data[3]))
-
+            i_atom += 1
+            
         inp_xyz.close()
 
     def print_xyz(self,output):
@@ -49,18 +56,20 @@ class Geometry(object):
         output.write("%s\n" % n_atoms)
         output.write("comment line\n")
         for i_atom in range(n_atoms):
-            output.write("%s %s %s %s\n" %
-                (self.atoms[i_atom],
-                 self.coords[3*i_atom],self.coords[3*i_atom+1],self.coords[3*i_atom+2]))
+            output.write("%s " % self.atoms[i_atom])
+            for i_coord in range(3):
+                output.write("%s " % (self.coords[3*i_atom+i_coord]/A2bohr))
+            output.write("\n")
 
     def print_vel(self,output):
         n_atoms = len(self.atoms)
         output.write("%s\n" % n_atoms)
         output.write("comment line\n")
         for i_atom in range(n_atoms):
-            output.write("%s %s %s %s\n" %
-                (self.atoms[i_atom],
-                 self.vels[3*i_atom],self.vels[3*i_atom+1],self.vels[3*i_atom+2]))
+            output.write("%s " % self.atoms[i_atom])
+            for i_coord in range(3):
+                output.write("%s " % (self.vels[3*i_atom+i_coord]/A2bohr))
+            output.write("\n")
 
     def read_mol(self,fname_mol):
         inp_mol = open(fname_mol,'r')
@@ -75,7 +84,7 @@ class Geometry(object):
                 atom = data[0]
                 if atom == self.atoms[line_nmb]:
                     self.atomic_numbers.append(float(data[1]))
-                    self.atomic_masses.append(float(data[2]))
+                    self.atomic_masses.append(float(data[2])*amu2em)
                 else:
                     raise Exception('Geometry read error. xyz and mol files '
                                     'contain different atomic labels')
