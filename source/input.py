@@ -46,6 +46,8 @@ class Input(object):
         self.config = configparser.ConfigParser()
         self.config.read(inp_fname)
 
+        self.curr_dir = os.path.dirname(os.path.realpath(inp_fname))
+
         self.inp_params = InputParams()
         self.analyze_input(self.inp_params)
 
@@ -60,14 +62,18 @@ class Input(object):
             inp_params.xyz_fname = section.get('xyz_file')
             if inp_params.xyz_fname is None:
                 raise Exception("Problem with [input] section. XYZ_FILE is not specified.")
+            inp_params.xyz_fname = os.path.join(self.curr_dir,inp_params.xyz_fname)
 
             #get mol_file
             inp_params.mol_fname = section.get('mol_file')
             if inp_params.mol_fname is None:
                 raise Exception("Problem with [input] section. MOL_FILE is not specified.")
+            inp_params.mol_fname = os.path.join(self.curr_dir,inp_params.mol_fname)
 
             #get vel_file
             inp_params.vel_fname = section.get('vel_file')
+            if inp_params.vel_fname is not None:
+                inp_params.vel_fname = os.path.join(self.curr_dir,inp_params.vel_fname)
         else:
             raise Exception("Problem with config file. Input section is not found.")
 
@@ -78,6 +84,7 @@ class Input(object):
             inp_params.run_script_fname = section.get('run_script')
             if inp_params.run_script_fname is None:
                 raise Exception("Problem with [external] section. run_script is not specified.")
+            inp_params.run_script_fname = os.path.join(self.curr_dir,inp_params.run_script_fname)
 
             #get command
             inp_params.run_command = section.get('command')

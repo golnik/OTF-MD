@@ -1,11 +1,11 @@
 import numpy as np
 import sys
 
-A2bohr = 1.8897259886
-
+#potential
 def V(x):
     return x**2
 
+#gradient
 def grad(x):
     return 2.*x
 
@@ -16,15 +16,18 @@ def read_geom(fname):
         lines_xyz = lines_xyz[2]
     x = float(lines_xyz.split()[1])
     
+    A2bohr = 1.8897259886
     x *= A2bohr
     
     return x
-    
-geom_xyz = sys.argv[1]
-eg_out   = sys.argv[2]
 
+geom_xyz = sys.argv[1]  #get geometry file name
+eg_out   = sys.argv[2]  #get EG output file name
+
+#read geometry and return x position
 x = read_geom(geom_xyz)
 
+#write EG output file
 with open(eg_out,'w') as file:
     file.write("$energy\n")
     file.write(" %s\n" % V(x))
