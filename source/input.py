@@ -43,7 +43,7 @@ class InputParams:
 class Input(object):
     def __init__(self,inp_fname):
         #create config file parser
-        self.config = configparser.ConfigParser()
+        self.config = configparser.ConfigParser(inline_comment_prefixes="#")
         self.config.read(inp_fname)
 
         self.curr_dir = os.path.dirname(os.path.realpath(inp_fname))

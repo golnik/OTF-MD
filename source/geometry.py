@@ -43,12 +43,12 @@ class Geometry(object):
                 data[0] = self.atoms[i_atom]
             except:
                 raise Exception("Different atoms in XYZ and VEL files.")
-            
+
             for i_coord in range(3):
                 self.vels[3*i_atom+i_coord] = float(data[i_coord+1])*A2bohr
 
             i_atom += 1
-            
+
         inp_xyz.close()
 
     def print_xyz(self,output):
@@ -109,3 +109,6 @@ class Geometry(object):
 
     def set_i_vel(self,i,val):
         self.vels[i]=val
+
+    def get_i_mass(self,i):
+        return self.atomic_masses[i]
