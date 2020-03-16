@@ -6,7 +6,7 @@
 #SBATCH --time=24:00:00
 #SBATCH --account=lcpt
 #SBATCH --exclusive
-#SBATCH --mem 8000mb
+#SBATCH --mem 80000mb
 
 module purge
 module load intel/18.0.2
