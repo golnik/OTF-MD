@@ -17,6 +17,8 @@ class InputParams:
         self.prop_dt = 1.0
         self.prop_steps = 1
 
+        self.opt_method = 'GradDescent'
+
         self.xyz_out_fname = 'XYZ_$TSTEP.xyz'
         self.vel_out_fname = 'VEL_$TSTEP.xyz'
         self.eg_out_fname  = 'EG_$TSTEP.out'
@@ -105,6 +107,11 @@ class Input(object):
             inp_params.prop_method = section.get('method',fallback=inp_params.prop_method)
             inp_params.prop_dt = section.getfloat('dt',fallback=inp_params.prop_dt)
             inp_params.prop_steps = section.getint('steps',fallback=inp_params.prop_steps)
+
+        if "optimization" in sections:
+            section = self.config['optimization']
+
+            inp_params.opt_method = section.get('method',fallback=inp_params.opt_method)
 
         if "output" in sections:
             section = self.config['output']
