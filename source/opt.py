@@ -29,7 +29,7 @@ def Optimize(geom,erun,input):
         energy, grad = erun.read_EG_out(eg_out)
 
         # compute RMS gradient
-        grad_rms = np.sqrt(np.mean(grad**2))
+        grad_rms = np.sqrt(np.mean(np.asarray(grad)**2))
 
         # check convergence
         if grad_rms < g_thresh:
