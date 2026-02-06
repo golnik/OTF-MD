@@ -2,9 +2,9 @@
 
 export OMP_NUM_THREADS=$SLURM_CPUS_PER_TASK
 
-module load intel/18.0.2
-module load intel-mpi/2018.2.199
-module load python/3.6.5
+module load intel/18.0.5
+module load intel-mpi/2018.4.274
+module load python/3.7.3
 
 geom_xyz=$1
 geom_mol="geometry.mol"

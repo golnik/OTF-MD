@@ -1,7 +1,7 @@
 #!/bin/bash
 
 gamess_bin="/home/ngolubev/Packages/software/gamess-uk/7.0/bin/gamess"
-theADCcode_bin="/home/ngolubev/programs/ADC/theADCcode/build/theADCcode"
+theADCcode_bin="/home/ngolubev/programs/ADC/theADCcode/releases/theADCcode_v1.8+adc4cvs_gcc8.3.0_static"
 
 #create temporary directory
 mkdir -p %TMP_DIR
@@ -10,7 +10,7 @@ cd %TMP_DIR
 active="6 to 90"                 # active orbital space
 
 symgroup="Cs"                    # symmetry line or constanti
-sym_nmbs="1 2"                   # symmetry numbers of non-empty irreps
+sym_nmbs="1"                   # symmetry numbers of non-empty irreps
 
 #state of interest for EGHrun
 i_sym=1		#in which symmetry irrep
@@ -58,63 +58,7 @@ $geometry{
 end
 integral high
 form high
-BASIS
-# HYDROGEN
-S   H
-      0.0310449             12.98511484       
-      0.2173262              1.95908134       
-      0.7516287              0.44403649       
-S   H
-      1.0000000              0.11282695       
-P   H
-      1.0000000              0.80305095       
-# CARBON
-S   C
-      0.0019796           4949.46032594       
-      0.0148496            758.82582124       
-      0.0762545            172.62336223       
-      0.2872122             47.77742113       
-      0.7104557             15.15140603       
-S   C
-      0.7530892              5.39400345       
-      0.2771972              2.11083628       
-S   C
-      1.0000000              0.52460137       
-S   C
-      1.0000000              0.15964728       
-P   C
-      0.0179023             18.97219923       
-      0.1114128              4.18721595       
-      0.3744715              1.21388239       
-      0.6513515              0.38698643       
-P   C
-      1.0000000              0.12406489       
-D   C
-      1.0000000              0.61467289       
-# OXYGEN
-S   O
-      0.0019631           8897.19445619       
-      0.0147021           1365.26538810       
-      0.0753808            311.21828724       
-      0.2850876             86.33353862       
-      0.7128153             27.42841118       
-S   O
-      0.7638180              9.74740298       
-      0.2663418              3.77109950       
-S   O
-      1.0000000              1.04455407       
-S   O
-      1.0000000              0.30382295       
-P   O
-      0.0199871             34.75998468       
-      0.1258380              7.80757529       
-      0.3939784              2.29096903       
-      0.6260029              0.71677956       
-P   O
-      1.0000000              0.21323853       
-D   O
-      1.0000000              1.25011953       
-END
+BASIS DZP
 SCFTYPE MP2
 Threshold 8
 vectors extguess
@@ -140,63 +84,7 @@ $geometry{
 };
 end
 integral high
-BASIS
-# HYDROGEN
-S   H
-      0.0310449             12.98511484       
-      0.2173262              1.95908134       
-      0.7516287              0.44403649       
-S   H
-      1.0000000              0.11282695       
-P   H
-      1.0000000              0.80305095       
-# CARBON
-S   C
-      0.0019796           4949.46032594       
-      0.0148496            758.82582124       
-      0.0762545            172.62336223       
-      0.2872122             47.77742113       
-      0.7104557             15.15140603       
-S   C
-      0.7530892              5.39400345       
-      0.2771972              2.11083628       
-S   C
-      1.0000000              0.52460137       
-S   C
-      1.0000000              0.15964728       
-P   C
-      0.0179023             18.97219923       
-      0.1114128              4.18721595       
-      0.3744715              1.21388239       
-      0.6513515              0.38698643       
-P   C
-      1.0000000              0.12406489       
-D   C
-      1.0000000              0.61467289       
-# OXYGEN
-S   O
-      0.0019631           8897.19445619       
-      0.0147021           1365.26538810       
-      0.0753808            311.21828724       
-      0.2850876             86.33353862       
-      0.7128153             27.42841118       
-S   O
-      0.7638180              9.74740298       
-      0.2663418              3.77109950       
-S   O
-      1.0000000              1.04455407       
-S   O
-      1.0000000              0.30382295       
-P   O
-      0.0199871             34.75998468       
-      0.1258380              7.80757529       
-      0.3939784              2.29096903       
-      0.6260029              0.71677956       
-P   O
-      1.0000000              0.21323853       
-D   O
-      1.0000000              1.25011953       
-END
+BASIS DZP
 bypass hf
 runtype transform
 active
@@ -213,10 +101,11 @@ time $theADCcode_bin << EOF > ADC.out
 guk
 &propagator
 ndadc3ip; sym $sym_nmbs; spin 2
+SYMGRP $symgroup
 &self-energy
 infinite
 IDIAGL 1
-SYMGRP $symgroup
+MAXSTA 70000
 &diagonalizer
 lanczos
 iter 100
