@@ -46,6 +46,47 @@ def Optimize(geom,erun,input):
                     i, geom.get_i_coord(i) - alpha * grad[i]
                 )
 
+    elif input.inp_params.opt_method == 'Newton':
+        nsteps   = 2
+        g_thresh = 1e-4
+
+        for it in range(nsteps):
+            # save geometry
+            xyz_out = input.inp_params.subst_variables(
+                input.inp_params.xyz_out_fname, it
+            )
+            with open(xyz_out, "w") as f:
+                geom.print_xyz(f)
+
+            # run electronic structure calculation
+            erun.run_external(it)
+
+            # read energy, gradient, and hessian
+            eg_out = input.inp_params.subst_variables(
+                input.inp_params.eg_out_fname, it
+            )
+            energy, grad, hess = erun.read_EGH_out(eg_out)
+
+            # compute RMS gradient
+            grad_rms = np.sqrt(np.mean(np.asarray(grad)**2))
+
+            print("RMS: %.4E, TRSH: %.4E" % (grad_rms,g_thresh))
+
+            # check convergence
+            if grad_rms < g_thresh:
+                print(f"Converged at step {it}: RMS grad = {grad_rms:.3e}")
+                break
+
+            #invert hessian
+            hess_1 = np.linalg.inv(hess)
+            H_1g = hess_1.dot(grad)
+
+            # update geometry
+            for i in range(n_coords):
+                geom.set_i_coord(
+                    i, geom.get_i_coord(i) - H_1g[i]
+                )            
+
     else:
         raise Exception("Unknown optimization method is requested.")
 

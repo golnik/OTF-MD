@@ -1,6 +1,7 @@
 import subprocess
 import re
 import sys
+import numpy as np
 
 from input import InputParams
 
@@ -47,6 +48,19 @@ class ExternalRun(object):
 
         return energy,grad
 
+    def read_EGH_out(self, fname):
+        '''
+        Read energy, gradient, and Hessian from EGH_out file
+        '''
+        with open(fname,'r') as file:
+            data_str = file.read()
+
+            energy = self.get_energy(data_str)
+            grad = self.get_gradient(data_str)
+            hess = self.get_hessian(data_str)
+
+        return energy,grad,hess
+
     def get_gradient(self, string):
         grad_pattern = r'[^\S\r\n]*\$gradient\s+(.*)$'
         grad_regex = re.compile(grad_pattern,re.IGNORECASE|re.MULTILINE)
@@ -66,3 +80,17 @@ class ExternalRun(object):
         energy = float(match.group(1))
 
         return energy
+    
+    def get_hessian(self, string):
+        hess_pattern = r'[^\S\r\n]*\$hessian\s+((?:.|\n)*)$'
+        hess_regex = re.compile(hess_pattern,re.IGNORECASE|re.MULTILINE)
+
+        match = re.search(hess_regex,string)
+
+        hess_list = [float(i) for i in match.group(1).split()]
+        hess_arr  = np.array(hess_list)
+
+        size = int(np.sqrt(len(hess_arr)))
+        hess = np.reshape(hess_arr, (size, size))
+    
+        return hess

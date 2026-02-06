@@ -20,6 +20,9 @@ class HarmonicPotential:
         qq0 = q-q0
         return G + 0.5 * H.dot(qq0) + 0.5 * qq0.dot(H)
 
+    def hess(self):
+        return H
+
 #function to read geometry file
 def read_geom_xyz(fname_xyz):
     inp_xyz = open(fname_xyz,'r')
@@ -82,6 +85,7 @@ HP = HarmonicPotential(q0,E,G,H)
 #compute energy and gradient
 V = HP.V(coords)
 grad = HP.grad(coords)
+hess = HP.hess()
 
 #write EG output file
 with open(eg_out,'w') as file:
@@ -90,3 +94,9 @@ with open(eg_out,'w') as file:
     file.write("$gradient\n")
     for icoord in range(len(coords)):
         file.write(" %s" % grad[icoord])
+    file.write("\n")
+    file.write("$hessian\n")
+    for icoord in range(len(coords)):
+        for jcoord in range(len(coords)):
+            file.write(" %s" % hess[icoord][jcoord])
+        file.write("\n")
