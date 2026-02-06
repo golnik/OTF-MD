@@ -4,6 +4,8 @@ import os
 
 class InputParams:
     def __init__(self):
+        self.task = 'prop'
+        
         self.xyz_fname = None
         self.mol_fname = None
         self.vel_fname = None
@@ -54,6 +56,10 @@ class Input(object):
     def analyze_input(self, inp_params):
         #get sections
         sections = self.config.sections()
+
+        if "task" in sections:
+            section = self.config['task']
+            inp_params.task = section.get('task',fallback=inp_params.task)
 
         if "input" in sections:
             section = self.config['input']
