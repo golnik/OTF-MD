@@ -18,6 +18,8 @@ class InputParams:
         self.prop_steps = 1
 
         self.opt_method = 'GradDescent'
+        self.opt_thrs = 1.E-2
+        self.opt_maxsteps = 10
 
         self.xyz_out_fname = 'XYZ_$TSTEP.xyz'
         self.vel_out_fname = 'VEL_$TSTEP.xyz'
@@ -112,6 +114,8 @@ class Input(object):
             section = self.config['optimization']
 
             inp_params.opt_method = section.get('method',fallback=inp_params.opt_method)
+            inp_params.opt_thrs = section.getfloat('thrs',fallback=inp_params.opt_thrs)
+            inp_params.opt_maxsteps = section.getint('maxsteps',fallback=inp_params.opt_maxsteps)
 
         if "output" in sections:
             section = self.config['output']

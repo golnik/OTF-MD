@@ -7,13 +7,15 @@ from externalrun import ExternalRun
 
 def Optimize(geom,erun,input):
     n_coords = geom.get_n_coords()
+    g_thresh = input.inp_params.opt_thrs
+    maxsteps = input.inp_params.opt_maxsteps
+
+    grad_rms = 0.
 
     if input.inp_params.opt_method == 'GradDescent':
-        nsteps   = 20
         alpha    = 0.05 #a.u.
-        g_thresh = 1e-4 #gradient threshold (let's see if this works)
 
-        for it in range(nsteps):
+        for it in range(maxsteps):
             # save geometry
             xyz_out = input.inp_params.subst_variables(
                 input.inp_params.xyz_out_fname, it
@@ -33,7 +35,7 @@ def Optimize(geom,erun,input):
             # compute RMS gradient
             grad_rms = np.sqrt(np.mean(np.asarray(grad)**2))
 
-            print("RMS: %.4E, TRSH: %.4E" % (grad_rms,g_thresh))
+            print("step %d out of %d. RMS: %.4E, TRSH: %.4E" % (it,maxsteps,grad_rms,g_thresh))
 
             # check convergence
             if grad_rms < g_thresh:
@@ -47,10 +49,7 @@ def Optimize(geom,erun,input):
                 )
 
     elif input.inp_params.opt_method == 'Newton':
-        nsteps   = 2
-        g_thresh = 1e-4
-
-        for it in range(nsteps):
+        for it in range(maxsteps):
             # save geometry
             xyz_out = input.inp_params.subst_variables(
                 input.inp_params.xyz_out_fname, it
@@ -70,7 +69,7 @@ def Optimize(geom,erun,input):
             # compute RMS gradient
             grad_rms = np.sqrt(np.mean(np.asarray(grad)**2))
 
-            print("RMS: %.4E, TRSH: %.4E" % (grad_rms,g_thresh))
+            print("step %d out of %d. RMS: %.4E, TRSH: %.4E" % (it,maxsteps,grad_rms,g_thresh))
 
             # check convergence
             if grad_rms < g_thresh:
@@ -90,6 +89,9 @@ def Optimize(geom,erun,input):
     else:
         raise Exception("Unknown optimization method is requested.")
 
-    print("Optimization completed! [not really :)]")
+    if grad_rms < g_thresh:
+        print("Optimization converged!")
+    else:
+        print("Optimization didn't converge! RMS: %.4E, TRSH: %.4E" % (grad_rms,g_thresh))
 
     return
