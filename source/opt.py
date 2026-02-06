@@ -33,6 +33,8 @@ def Optimize(geom,erun,input):
             # compute RMS gradient
             grad_rms = np.sqrt(np.mean(np.asarray(grad)**2))
 
+            print("RMS: %.4E, TRSH: %.4E" % (grad_rms,g_thresh))
+
             # check convergence
             if grad_rms < g_thresh:
                 print(f"Converged at step {it}: RMS grad = {grad_rms:.3e}")
